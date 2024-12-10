@@ -1,4 +1,4 @@
-# Allora Form Submission
+# Allora Forge Form Submission
 
 I have made only for introductory purposes, I do not encourage anyone to use this software, it is prohibited by law. This project automates the process of submitting forms for Allora Forge accounts.
 
@@ -34,7 +34,31 @@ pip install -r requirements.txt
    * `addresses.txt`: Contains wallet addresses (one per line)
    * `proxies.txt`: Contains proxy addresses in format `http://login:password@ip:port` (only static proxies)
 
-5. Create required directories:
+5. Customize account generation (important):
+   Open `utils.py` and customize these variables to make your accounts look more natural:
+   * `prefixes`: Add your own prefixes for usernames
+   * `suffixes`: Add your own suffixes for usernames
+   * `first_names`: Add more real names to make accounts look more natural
+   
+   Example of customization:
+   ```python
+   prefixes = [
+       'dev', 'hack', 'code', 'algo', 'py', 'data', 'ml', 'ai', 'web',
+       # Add your own prefixes here
+   ]
+   
+   suffixes = [
+       'master', 'ninja', 'guru', 'wizard', 'pro', 'dev', 'hacker',
+       # Add your own suffixes here
+   ]
+   
+   first_names = [
+       "Alex", "Michael", "David", "John",
+       # Add more names here
+   ]
+   ```
+
+6. Create required directories:
 ```
 project/
 ├── data/
@@ -47,12 +71,12 @@ project/
     └── failed_submissions.txt
 ```
 
-6. Generate accounts:
+7. Generate accounts:
    * Run the script using `python main.py`
    * Select option 1 "Generate Accounts"
    * Accounts will be generated based on your addresses in `addresses.txt`
 
-7. Submit forms:
+8. Submit forms:
    * After successful generation, select option 2 "Run Form Submission"
    * The script will process all generated accounts using provided proxies
 
@@ -60,6 +84,11 @@ project/
 * Successfully submitted forms will be logged in `logs/successful_submissions.txt`
 * Failed submissions will be logged in `logs/failed_submissions.txt`
 * Detailed logs can be found in `logs/debug.log`
+
+## Important Notes
+* Make sure to customize the username generation in `utils.py` before running the script
+* The more diverse your custom words and names are, the more natural the generated accounts will look
+* Don't use the default values - customize them according to your needs
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
