@@ -16,7 +16,12 @@ def setup_logger():
     
     logger.remove()
     
-    logger.add(LOG_FILE, rotation="10 MB", compression="zip", level="DEBUG")
+    logger.add(LOG_FILE, 
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {message}",
+        rotation="10 MB", 
+        compression="zip", 
+        level="DEBUG"
+    )
     
     logger.add(
         sys.stdout,
@@ -65,26 +70,53 @@ def read_addresses() -> List[str]:
         logger.error(f"Addresses file not found: {ADDRESSES_FILE}")
         return []
 
-def generate_random_email(nickname: str, firstname: str) -> str:
-    year = random.randint(1980, 2005)
+def get_random_firstname() -> str:
+    first_names = [
+        "Alex", "Michael", "David", "John", "James", "Robert", "William", "Thomas",
+        "Daniel", "Kevin", "Brian", "George", "Edward", "Richard", "Joseph", "Charles",
+        "Christopher", "Andrew", "Paul", "Mark", "Donald", "Steven", "Kenneth", "Anthony",
+        "Emma", "Olivia", "Ava", "Isabella", "Sophia", "Mia", "Charlotte", "Amelia",
+        "Harper", "Evelyn", "Abigail", "Emily", "Elizabeth", "Sofia", "Avery", "Ella",
+        "Scarlett", "Grace", "Victoria", "Riley", "Aria", "Lily", "Aurora", "Zoey"
+    ]
+    return random.choice(first_names)
+
+def generate_random_email(username: str) -> str:
+    year = random.randint(1990, 2020)
     email_providers = ['gmail.com', 'yahoo.com', 'outlook.com', 'protonmail.com']
-    email = f"{nickname.lower()}.{firstname.lower()}{year}@{random.choice(email_providers)}"
+    email = f"{username}{year}@{random.choice(email_providers)}"
     return email
 
-def generate_discord_tag(username: str) -> str:
-    modified_username = ''.join(random.choices(username + string.ascii_lowercase, k=len(username)))
-    tag = ''.join(random.choices(string.digits, k=4))
-    return f"{modified_username}#{tag}"
+def generate_username_for_service() -> str:
+    prefixes = [
+        'dev', 'hack', 'code', 'algo', 'py', 'data', 'ml', 'ai', 'web', 
+        'quantum', 'cyber', 'cloud', 'deep', 'neural', 'robot', 'tech'
+    ]
+    suffixes = [
+        'master', 'ninja', 'guru', 'wizard', 'pro', 'dev', 'hacker', 
+        'coder', 'engineer', 'scientist', 'researcher', 'architect'
+    ]
+    
+    pattern = random.choice([
+        "{prefix}_{suffix}",
+        "{prefix}{suffix}",
+        "the_{prefix}_{suffix}",
+        "{prefix}.{suffix}"
+    ])
+    
+    username = pattern.format(
+        prefix=random.choice(prefixes),
+        suffix=random.choice(suffixes)
+    )
+    
+    if random.random() > 0.5:
+        username += str(random.randint(1, 99))
+    
+    return username
 
 def generate_wallet_address() -> str:
     address = '0x' + ''.join(random.choices(string.hexdigits, k=40))
     return address.lower()
-
-def generate_username() -> str:
-    adjectives = ['crypto', 'tech', 'dev', 'code', 'web3', 'data']
-    nouns = ['wizard', 'ninja', 'master', 'guru', 'pro', 'expert']
-    numbers = ''.join(random.choices(string.digits, k=2))
-    return f"{random.choice(adjectives)}_{random.choice(nouns)}{numbers}"
 
 class AddressManager:
     def __init__(self, addresses_file):
@@ -111,16 +143,19 @@ class AddressManager:
         return address
 
 def generate_account_data(address_manager: AddressManager) -> Dict[str, str]:
-    nickname = generate_username()
-    firstname = ''.join(random.choices(string.ascii_letters, k=6)).capitalize()
+    firstname = get_random_firstname()
+    base_username = generate_username_for_service()
     
     return {
-        "nickname": nickname,
+        "nickname": base_username,
         "firstname": firstname,
         "wallet": address_manager.get_next_address(),
-        "email": generate_random_email(nickname, firstname),
-        "discord": generate_discord_tag(nickname),
-        "huggingface": f"hf_{generate_username()}",
-        "kaggle": f"k_{generate_username()}",
-        "github": f"gh_{generate_username()}"
+        "email": generate_random_email(base_username),
+        "discord": f"{base_username}{random.randint(1000, 9999)}",
+        "huggingface": generate_username_for_service(),
+        "kaggle": generate_username_for_service(),
+        "github": generate_username_for_service(),
+        "telegram": base_username,
+        "linkedin": f"{firstname.lower()}-{generate_username_for_service()}",
+        "twitter": generate_username_for_service()
     }
